@@ -1,0 +1,26 @@
+[
+  {
+    "id": 1,
+    "nombre": "Simple",
+    "precio": 1000,
+    "img": "imgburg/simple.png"
+  },
+  {
+    "id": 2,
+    "nombre": "Doble",
+    "precio": 1500,
+    "img": "imgburg/doble.png"
+  },
+  {
+    "id": 3,
+    "nombre": "Pollo",
+    "precio": 1300,
+    "img": "imgburg/pollo.png"
+  },
+  {
+    "id": 4,
+    "nombre": "Vegana",
+    "precio": 1200,
+    "img": "imgburg/vegana.png"
+  }
+]
