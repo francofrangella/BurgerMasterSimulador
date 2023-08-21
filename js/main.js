@@ -1,8 +1,10 @@
 const menuContent = document.getElementById("menuContent");
 const carritoContent = document.getElementById("carritoContent");
+
 //----------variables----------//
 let carrito = [];
 let compras = JSON.parse(localStorage.getItem("compras")) || [];
+
 //-------------obtener menu----------------//
 function getMenu() {
   return new Promise((resolve, reject) => {
@@ -17,12 +19,12 @@ function getMenu() {
             <h3>${burger.nombre}</h3>
             <p class="valor">$${burger.precio}</p>
           `;
-//----------------boton agregar carrito--------------//
+          //----------------boton agregar carrito--------------//
           let agregar = document.createElement("button");
           agregar.innerText = "Agregar al carrito🛒";
           agregar.className = "agrego";
           content.append(agregar);
-//------------------cantidad de unidades--------------//
+          //------------------cantidad de unidades--------------//
           let cantidadInput = document.createElement("input");
           cantidadInput.type = "number";
           cantidadInput.min = 0;
@@ -55,6 +57,7 @@ function getMenu() {
       });
   });
 }
+
 //---------------------form----------------//
 function mostrarFormulario() {
   carritoContent.innerHTML = "";
@@ -67,9 +70,9 @@ function mostrarFormulario() {
     <input type="text" id="direccion" name="direccion" required>
     <button type="submit">Guardar</button>
   `;
-  
+
   carritoContent.append(form);
-  
+
   form.addEventListener("submit", (e) => {
     e.preventDefault();
     const nombre = document.getElementById("nombre").value;
@@ -82,7 +85,9 @@ function mostrarFormulario() {
       icon: 'success',
       confirmButtonText: 'Aceptar'
     });
-  });}
+  });
+}
+
 //----------------guardar info--------------//
 function guardarCompra(nombre, direccion) {
   const nuevaCompra = {
@@ -102,8 +107,19 @@ function guardarCompra(nombre, direccion) {
 function mostrarCarrito() {
   carritoContent.innerHTML = "";
   let total = 0;
-//------------recorrer carrito--------------//
+//---------------almacenar carrito por id-----------//
+  const carritoMap = new Map();
   carrito.forEach((item) => {
+    if (carritoMap.has(item.id)) {
+      const existingItem = carritoMap.get(item.id);
+      existingItem.cantidad += item.cantidad;
+      existingItem.subtotal += item.subtotal;
+    } else {
+      carritoMap.set(item.id, item);
+    }
+  });
+//------------recorrer carrito-----------//
+  carritoMap.forEach((item) => {
     let content = document.createElement("div");
     content.className = "carritoItem";
     content.innerHTML = `
@@ -112,7 +128,7 @@ function mostrarCarrito() {
       <p>Cantidad: ${item.cantidad}</p>
       <p>Subtotal: $${item.subtotal}</p>
     `;
-//------------------quitar--------------//
+
     let quitar = document.createElement("button");
     quitar.innerText = "Quitar un producto🍔";
     quitar.className = "quitar";
@@ -125,7 +141,7 @@ function mostrarCarrito() {
     carritoContent.append(content);
     total += item.subtotal;
   });
-//-----------------carrito total--------------//
+
   let totalElement = document.createElement("p");
   totalElement.className = "total";
   totalElement.innerText = `🛒Total: $${total}`;
@@ -140,16 +156,21 @@ function mostrarCarrito() {
     carrito = [];
     mostrarCarrito();
   });
-//-----------------boton comprar--------------//
+
   let comprarButton = document.createElement("button");
   comprarButton.innerText = "Comprar✅";
   comprarButton.className = "comprar";
   carritoContent.append(comprarButton);
 
-  comprarButton.addEventListener("click", () => {
-    mostrarFormulario();
-  });
+  //---------no disponible si el carrito esta vacio----------//
+  if (carrito.length > 0) {
+    comprarButton.addEventListener("click", () => {
+      mostrarFormulario();
+    });
+  } else { comprarButton.disabled = true;
+  }
 }
+
 //---------------quitar elemento-------------//
 function quitarElementoCarrito(id) {
   const index = carrito.findIndex((item) => item.id === id);
@@ -167,4 +188,3 @@ function quitarElementoCarrito(id) {
 getMenu().then(() => {
   mostrarCarrito();
 });
-
